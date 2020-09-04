@@ -1,0 +1,21 @@
+{
+  "name": "searchini-scraper",
+  "version": "0.1.0",
+  "description": "product scraper",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "node dist/index.js"
+  },
+  "author": "Jouini Hamza",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "cheerio": "^1.0.0-rc.3",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6"
+  },
+  "devDependencies": {
+    "@types/cheerio": "^0.22.21",
+    "@types/request-promise": "^4.1.46"
+  }
+}
