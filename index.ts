@@ -1,41 +1,38 @@
 import axios from 'axios';
-import { Product , indexRange, Information } from './utils/helpers';
+import { Product , indexRange, Information, RoadMap, Template } from './utils/helpers';
 import { Tunisiatech } from './modules/tunisiatech'
 import querystring from 'querystring';
+import { WebsitesProvider } from 'service';
 
 export class Scraper {
 
     products: Product[] = []
-    website: Information | undefined 
     pages: indexRange = { start: 0 , end: 0 }
     promises: Promise<any>[] = []
 
-    // TODO : inject website service in the scraper 
-    constructor( private roadmap = new Tunisiatech()) {
+    constructor( private service = new WebsitesProvider()) {
         console.time('Timer')
     }
 
-    request(page: Number): Promise<any> {
-        // TODO : load website information from service 
-        return axios.post(this.website.uri, querystring.stringify(this.website.query))
+    request(page: Number , meta: Information): Promise<any> {
+        return axios.post(meta.uri, querystring.stringify(meta.query))
     }
 
-    filter(body: string): void {
-        this.roadmap.load(body)
-        this.products.push(this.roadmap.getProducts());
+    filter(body: string,roadmap: Template): void {
+        this.products.push(roadmap.getProducts());
     }
 
-    async paginate(): Promise<any> {
+    async paginate( website: Template ): Promise<any> {
         // TODO : get indexRange from first page 
         for(let page = 0  ; page <= this.pages.end; page++ ) {
-            this.promises.push(this.request(page).then(this.filter).catch( e => this.onError(e,page)) )
+            this.promises.push(this.request(page,website.getInformation())
+            .then( body => this.filter(body,website)).catch( e => this.onError(e,page)) )
         }
         
     }
 
-    async search( website: String , query: String): Promise<any> {
-        // TODO : exist test mode 
-        this.paginate()
+    async search( website: string , query: String): Promise<any> {
+        this.paginate( this.service.get(website) )
         await Promise.all(this.promises)
         console.log(this.products, this.products.length);
         console.timeEnd('Timer')

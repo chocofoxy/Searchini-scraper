@@ -43,12 +43,12 @@ export interface Template {
 
 
 export interface Information {
-    name: String
-    uri: String 
-    method: String
+    name: string
+    uri: string 
+    method: string
     query: {
-        search: String
-        page: String
+        search: string
+        page: string
     }
     options: Object
     api: Boolean
