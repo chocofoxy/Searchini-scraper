@@ -1,5 +1,5 @@
-import { Template } from "utils/helpers"
-import { Tunisiatech } from "modules/tunisiatech"
+import { Template, RoadMap } from "./utils/helpers"
+import { Tunisiatech } from "./modules/tunisiatech"
 
 // TODO : load all modules in this service 
 export class WebsitesProvider {
@@ -7,15 +7,15 @@ export class WebsitesProvider {
     modules : Collection = {}
 
     constructor () {
-        this.modules["tech"] = new Tunisiatech()
+        this.modules["Tunisiatech"] = new Tunisiatech()
     }
 
-    get( name: string ) : Template {
+    get( name: string ) : Template & RoadMap {
         return this.modules[name]
     }
 
 }
 
 interface Collection {
-    [key: string]: Template ;
+    [key: string]: Template & RoadMap;
 }

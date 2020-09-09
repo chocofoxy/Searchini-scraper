@@ -2,8 +2,8 @@ import cheerio from 'cheerio';
 
 
 export interface indexRange {
-    start: Number,
-    end: Number
+    start: number,
+    end: number
 }
 
 export class Product {
@@ -24,7 +24,7 @@ export class RoadMap {
     constructor() { }
 
     load(html: string, options = {}): void {
-        this.$ = cheerio.load(html, options)
+        this.$ = cheerio.load(html, options)        
     }
 
 }
@@ -46,11 +46,14 @@ export interface Information {
     name: string
     uri: string 
     method: string
-    query: {
-        search: string
-        page: string
-    }
+    query: Query
     options: Object
     api: Boolean
 
 }
+
+interface Query {
+    search: string
+    page: string
+}
+

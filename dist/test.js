@@ -6,5 +6,6 @@ const bootstrap = async () => {
     console.time('Bootstrap');
     let scraper = new index_1.Scraper();
     console.timeEnd('Bootstrap');
+    scraper.search("Tunisiatech", "msi");
 };
 bootstrap();

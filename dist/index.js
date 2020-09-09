@@ -5,39 +5,43 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Scraper = void 0;
 const axios_1 = __importDefault(require("axios"));
-const tunisiatech_1 = require("./modules/tunisiatech");
-const querystring_1 = __importDefault(require("querystring"));
+//import querystring from 'querystring';
+const service_1 = require("./service");
 class Scraper {
-    // TODO : inject website service in the scraper 
-    constructor(roadmap = new tunisiatech_1.Tunisiatech()) {
-        this.roadmap = roadmap;
+    constructor(service = new service_1.WebsitesProvider()) {
+        this.service = service;
         this.products = [];
-        this.pages = { start: 0, end: 0 };
+        this.query = "";
         this.promises = [];
-        console.time('Timer');
     }
-    request(page) {
-        // TODO : load website information from service 
-        return axios_1.default.post(this.website.uri, querystring_1.default.stringify(this.website.query));
+    request(page, meta) {
+        console.log(meta.uri + meta.query.search + "=" + this.query + "&" + meta.query.page + "=" + page);
+        return axios_1.default.post(meta.uri + meta.query.search + "=" + this.query + "&" + meta.query.page + "=" + page);
     }
-    filter(body) {
-        this.roadmap.load(body);
-        this.products.push(this.roadmap.getProducts());
+    filter(body, roadmap) {
+        if (body == undefined)
+            throw new Error(' the body of the request is empty ! ');
+        roadmap.load(body);
+        this.products = this.products.concat(roadmap.getProducts());
     }
-    async paginate() {
+    async paginate(website) {
         // TODO : get indexRange from first page 
-        for (let page = 0; page <= this.pages.end; page++) {
-            this.promises.push(this.request(page).then(this.filter).catch(e => this.onError(e, page)));
+        let pages = website.getPages();
+        for (let page = pages.start; page <= pages.end; page++) {
+            this.promises.push(this.request(page, website.getInformation())
+                .then(res => this.filter(res.body, website)).catch(e => this.onError(e, page)));
         }
     }
     async search(website, query) {
-        // TODO : exist test mode 
-        this.paginate();
+        console.time('Timer');
+        this.query = query;
+        this.paginate(this.service.get(website));
         await Promise.all(this.promises);
-        console.log(this.products, this.products.length);
+        console.log(this.products, this.products.length, this.products[0]);
         console.timeEnd('Timer');
     }
     onError(e, page) {
+        console.error(e);
         console.log(` ${'Module'} - Error on page number ${page}`);
     }
 }

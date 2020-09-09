@@ -5,6 +5,7 @@ const bootstrap : Function = async () => {
     console.time('Bootstrap')
     let scraper = new Scraper()
     console.timeEnd('Bootstrap')
+    scraper.search("Tunisiatech","msi")
 }
 bootstrap()
 
